@@ -1,4 +1,4 @@
-﻿namespace BookList.API.Entities;
+﻿namespace BookList.Core.Entities;
 
 public partial class Book
 {
