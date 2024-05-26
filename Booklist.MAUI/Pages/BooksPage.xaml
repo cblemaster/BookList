@@ -9,13 +9,15 @@
              x:DataType="{x:Type pagemodels:BooksPageModel}"
              Title="Books Page">
     <ContentPage.Behaviors>
-        <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding PageAppearingCommand, Mode=OneWay}" />
+        <toolkit:EventToCommandBehavior EventName="Appearing" 
+                                        Command="{Binding PageAppearingCommand, Mode=OneWay}" />
     </ContentPage.Behaviors>
     <ContentPage.Resources>
         <converters:BoolToYesNoConverter x:Key="boolyesno" />
     </ContentPage.Resources>
-    <Grid>
-        <CollectionView ItemsSource="{Binding Books, Mode=OneWay}" SelectionMode="Single">
+    <Grid RowDefinitions="9*,1*" Margin="10">
+        <CollectionView ItemsSource="{Binding Books, Mode=OneWay}" 
+                        SelectionMode="Single">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
             </CollectionView.ItemsLayout>
@@ -23,22 +25,31 @@
                 <DataTemplate x:DataType="{x:Type dto:BookDTO}">
                     <Frame>
                         <VerticalStackLayout>
-                            <Label Text="{Binding Title, StringFormat='Title: {0}', Mode=OneWay}" />
-                            <Label Text="{Binding Subtitle, StringFormat='Subtitle: {0}', Mode=OneWay}" />
-                            <Label Text="{Binding Publisher, StringFormat='Publisher: {0}', Mode=OneWay}" />
-                            <Label Text="{Binding PageCount, StringFormat='Page Count: {0}', Mode=OneWay}" />
-                            <Label Text="{Binding IsFavorite, StringFormat='Is Favorite?: {0}', Mode=OneWay, Converter={StaticResource boolyesno}}" />
-                            <Label Text="{Binding Description, StringFormat='Description: {0}', Mode=OneWay}" />
-                            <Label Text="{Binding Genre.Name, StringFormat='Genre: {0}', Mode=OneWay}" />
+                            <Label Text="{Binding Title, StringFormat='Title: {0}', Mode=OneWay}" 
+                                   Style="{StaticResource BigLabelStyle}" />
+                            <Label Text="{Binding Subtitle, StringFormat='Subtitle: {0}', Mode=OneWay}"
+                                   Style="{StaticResource SmallLabelStyle}" />
+                            <Label Text="{Binding Publisher, StringFormat='Publisher: {0}', Mode=OneWay}"
+                                   Style="{StaticResource SmallLabelStyle}" />
+                            <Label Text="{Binding PageCount, StringFormat='Page Count: {0}', Mode=OneWay}"
+                                   Style="{StaticResource SmallLabelStyle}" />
+                            <Label Text="{Binding IsFavorite, StringFormat='Is Favorite?: {0}', Mode=OneWay, Converter={StaticResource boolyesno}}"
+                                   Style="{StaticResource SmallLabelStyle}" />
+                            <Label Text="{Binding Description, StringFormat='Description: {0}', Mode=OneWay}"
+                                   Style="{StaticResource SmallLabelStyle}" />
+                            <Label Text="{Binding Genre.Name, StringFormat='Genre: {0}', Mode=OneWay}"
+                                   Style="{StaticResource SmallLabelStyle}" />
                             <VerticalStackLayout>
                                 <Label Text="Author(s):" />
                                 <CollectionView ItemsSource="{Binding Authors, Mode=OneWay}" SelectionMode="None">
                                     <CollectionView.ItemsLayout>
-                                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="3" />
+                                        <LinearItemsLayout Orientation="Vertical" 
+                                                           ItemSpacing="3" />
                                     </CollectionView.ItemsLayout>
                                     <CollectionView.ItemTemplate>
                                         <DataTemplate x:DataType="{x:Type dto:AuthorDTO}">
-                                            <Label Text="{Binding Name, Mode=OneWay}" />
+                                            <Label Text="{Binding Name, Mode=OneWay}"
+                                                   Style="{StaticResource SmallLabelStyle}" />
                                         </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
@@ -48,5 +59,10 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+        <HorizontalStackLayout Grid.Row="1" Spacing="5">
+            <Button Text="Create New Book" />
+            <Button Text="Update Selected Book" />
+            <Button Text="Delete Selected Book" />
+        </HorizontalStackLayout>
     </Grid>
 </ContentPage>

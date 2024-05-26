@@ -9,13 +9,15 @@
              x:DataType="{x:Type pagemodels:GenresPageModel}"
              Title="Genres Page">
     <ContentPage.Behaviors>
-        <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding PageAppearingCommand, Mode=OneWay}" />
+        <toolkit:EventToCommandBehavior EventName="Appearing" 
+                                        Command="{Binding PageAppearingCommand, Mode=OneWay}" />
     </ContentPage.Behaviors>
     <ContentPage.Resources>
         <converters:BoolToYesNoConverter x:Key="boolyesno" />
     </ContentPage.Resources>
-    <Grid>
-        <CollectionView ItemsSource="{Binding Genres, Mode=OneWay}" SelectionMode="Single">
+    <Grid RowDefinitions="9*,1*" Margin="10">
+        <CollectionView ItemsSource="{Binding Genres, Mode=OneWay}" 
+                        SelectionMode="Single">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
             </CollectionView.ItemsLayout>
@@ -23,12 +25,19 @@
                 <DataTemplate x:DataType="{x:Type dto:GenreDTO}">
                     <Frame>
                         <VerticalStackLayout>
-                            <Label Text="{Binding Name, Mode=OneWay}" />
-                            <Label Text="{Binding IsFavorite, StringFormat='Is Favorite?: {0}', Mode=OneWay, Converter={StaticResource boolyesno}}" />
+                            <Label Text="{Binding Name, Mode=OneWay}" 
+                                   Style="{StaticResource BigLabelStyle}" />
+                            <Label Text="{Binding IsFavorite, StringFormat='Is Favorite?: {0}', Mode=OneWay, Converter={StaticResource boolyesno}}" 
+                                   Style="{StaticResource SmallLabelStyle}" />
                         </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+        <HorizontalStackLayout Grid.Row="1" Spacing="5">
+            <Button Text="Create New Genre" />
+            <Button Text="Update Selected Genre" />
+            <Button Text="Delete Selected Genre" />
+        </HorizontalStackLayout>
     </Grid>
 </ContentPage>
