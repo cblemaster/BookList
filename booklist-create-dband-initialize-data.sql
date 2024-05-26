@@ -80,6 +80,7 @@ INSERT INTO Author([Name],IsFavorite) VALUES('Tom Clancy',0);
 INSERT INTO Author([Name],IsFavorite) VALUES('Edgar Allen Poe',1);
 INSERT INTO Author([Name],IsFavorite) VALUES('George RR Martin',1);
 INSERT INTO Author([Name],IsFavorite) VALUES('Stephen Baxter',0);
+INSERT INTO Author([Name],IsFavorite) VALUES('George Orwell',0);
 
 INSERT INTO Book([Title],IsFavorite,GenreId) VALUES ('Rendevous with Rama',0,(SELECT Id FROM Genre WHERE Genre.Name='Science Fiction'));
 INSERT INTO Book([Title],IsFavorite,GenreId) VALUES ('Fall',1,(SELECT Id FROM Genre WHERE Genre.Name='Science Fiction'));
