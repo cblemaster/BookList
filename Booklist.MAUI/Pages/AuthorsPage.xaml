@@ -4,12 +4,16 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:pagemodels="clr-namespace:Booklist.MAUI.PageModels"
              xmlns:dto="clr-namespace:BookList.Core.DTO;assembly=BookList.Core"
+             xmlns:converters="clr-namespace:BasicTaskManagement.UI.MAUI.Converters"
              x:Class="Booklist.MAUI.Pages.AuthorsPage"
              x:DataType="{x:Type pagemodels:AuthorsPageModel}"
              Title="Authors Page">
     <ContentPage.Behaviors>
         <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding PageAppearingCommand, Mode=OneWay}" />
     </ContentPage.Behaviors>
+    <ContentPage.Resources>
+        <converters:BoolToYesNoConverter x:Key="boolyesno" />
+    </ContentPage.Resources>
     <Grid>
         <CollectionView ItemsSource="{Binding Authors, Mode=OneWay}" SelectionMode="Single">
             <CollectionView.ItemsLayout>
@@ -20,7 +24,7 @@
                     <Frame>
                         <VerticalStackLayout>
                             <Label Text="{Binding Name, Mode=OneWay}" />
-                            <Label Text="{Binding IsFavorite, Mode=OneWay}" />
+                            <Label Text="{Binding IsFavorite, StringFormat='Is Favorite?: {0}', Mode=OneWay, Converter={StaticResource boolyesno}}" />
                         </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>
