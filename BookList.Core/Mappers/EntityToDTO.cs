@@ -36,7 +36,7 @@ public static class EntityToDTO
     public static BookDTO MapBookEntityToDTO(Book entity) =>
         new(entity.Id, entity.Title, entity.Subtitle, entity.IsFavorite,
             entity.Publisher, entity.PageCount, entity.Description,
-            MapGenreEntityToDTO(entity.Genre), 
+            MapGenreEntityToDTO(entity.Genre),
             MapAuthorEntitiesToDTOs(entity.Authors));
 
     public static IEnumerable<BookDTO> MapBookEntitiesToDTOs(IEnumerable<Book> entities)

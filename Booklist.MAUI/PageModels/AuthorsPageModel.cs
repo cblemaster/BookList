@@ -3,7 +3,6 @@ using BookList.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace Booklist.MAUI.PageModels;
 
@@ -34,7 +33,7 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
     [RelayCommand]
     private async Task DeleteSelectedAuthorAsync()
     {
-        bool deleteConfirmed = await Shell.Current.CurrentPage.DisplayAlert("Delete?", $"Are you sure you want to delete author { SelectedAuthor.Name }?", "Yes, delete", "No, cancel");
+        bool deleteConfirmed = await Shell.Current.CurrentPage.DisplayAlert("Delete?", $"Are you sure you want to delete author {SelectedAuthor.Name}?", "Yes, delete", "No, cancel");
 
         if (!deleteConfirmed) { return; }
 

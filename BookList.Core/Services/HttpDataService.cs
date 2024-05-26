@@ -38,7 +38,7 @@ public class HttpDataService : IDataService
                 ? await response.Content.ReadFromJsonAsync<BookDTO>()
                     ?? new(0, "NotFound", string.Empty, false, null, null,
                        null, new(0, "NotFound", false), [new(0, "NotFound", false)])
-                : new(0, "NotFound", string.Empty, false, null, null, null, 
+                : new(0, "NotFound", string.Empty, false, null, null, null,
                     new(0, "NotFound", false), [new(0, "NotFound", false)]);
         }
         catch (Exception) { throw; }
@@ -144,7 +144,7 @@ public class HttpDataService : IDataService
         if (author is not null)
         {
             if (await DoesAuthorHaveBooks(id)) { return; }
-            
+
             try
             {
                 HttpResponseMessage response = await _client.DeleteAsync($"/author/{id}");
@@ -154,17 +154,11 @@ public class HttpDataService : IDataService
         }
     }
 
-    public async Task<bool> DoesGenreHaveBooks(int id)
-    {
-        if ((await GetBooksAsync())
+    public async Task<bool> DoesGenreHaveBooks(int id) =>
+        (await GetBooksAsync())
                 .Select(b => b.Genre)
                 .Select(g => g.Id)
-                .Contains(id))
-        {
-            return true;
-        }
-        return false;
-    }
+                .Contains(id);
 
     public async Task<bool> DoesAuthorHaveBooks(int id)
     {
@@ -176,11 +170,7 @@ public class HttpDataService : IDataService
                 authorIds.Add(auth.Id);
             }
         }
-        if (authorIds.Contains(id))
-        {
-            return true;
-        }
-        return false;
+        return authorIds.Contains(id);
     }
 
 }
