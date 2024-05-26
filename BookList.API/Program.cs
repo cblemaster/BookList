@@ -2,6 +2,7 @@ using BookList.API.Context;
 using BookList.Core.DTO;
 using BookList.Core.Entities;
 using BookList.Core.Mappers;
+using BookList.Core.Validation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Context = BookList.API.Context.BookListContext;
@@ -73,6 +74,31 @@ app.MapGet("/genre/{id:int}", async Task<Results<BadRequest<string>, Ok<GenreDTO
 });
 
 // Create Author
+app.MapPost("/author", async Task<Results<BadRequest<string>, Created<AuthorDTO>>> (Context context, CreateUpdateAuthorDTO authorToCreate) =>
+{
+    if (authorToCreate is null)
+    {
+        return TypedResults.BadRequest("No author to create provided.");
+    }
+
+    if (context.Authors.Select(a => a.Name).Contains(authorToCreate.Name))
+    {
+        return TypedResults.BadRequest($"Author name {authorToCreate.Name} is already used.");
+    }
+
+    ValidationResult validationResult = authorToCreate.Validate();
+
+    if (!validationResult.IsValid)
+    {
+        return TypedResults.BadRequest(validationResult.ErrorMessage);
+    }
+
+    Author newAuthor = DTOToEntity.MapCreateUpdateAuthorDTOToAuthorEntity(authorToCreate);
+    context.Authors.Add(newAuthor);
+    await context.SaveChangesAsync();
+
+    return TypedResults.Created($"/author/{newAuthor.Id}", EntityToDTO.MapAuthorEntityToDTO(newAuthor));
+});
 
 // Delete Author
 app.MapDelete("/author/{id:int}", async Task<Results<BadRequest<string>, NoContent, NotFound<string>>> (Context context, int id) =>
