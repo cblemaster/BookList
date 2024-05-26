@@ -26,7 +26,8 @@ namespace Booklist.MAUI
                          .AddTransient<AuthorsPage>()
                          .AddTransient<BooksPageModel>()
                          .AddTransient<GenresPageModel>()
-                         .AddTransient<AuthorsPageModel>();
+                         .AddTransient<AuthorsPageModel>()
+                         .AddTransient<CreateUpdateAuthorPageModel>();
 
 #if DEBUG
             builder.Logging.AddDebug();

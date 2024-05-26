@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pagemodels="clr-namespace:Booklist.MAUI.PageModels"
+             x:Class="Booklist.MAUI.Pages.CreateUpdateAuthorPage"
+             x:DataType="{x:Type pagemodels:CreateUpdateAuthorPageModel}"
+             Title="Create Update Author Page">
+    <VerticalStackLayout Margin="10" Spacing="10">
+        <Label Text="Author Name" Style="{StaticResource BigLabelStyle}" />
+        <Entry Text="{Binding Author.Name, Mode=TwoWay}">
+            <Entry.Behaviors>
+                <toolkit:TextValidationBehavior 
+                    InvalidStyle="{StaticResource InvalidEntryStyle}"
+                    ValidStyle="{StaticResource ValidEntryStyle}"
+                    Flags="ValidateOnValueChanged"
+                    MinimumLength="1"
+                    MaximumLength="100" />
+            </Entry.Behaviors>
+        </Entry>
+        <HorizontalStackLayout Spacing="5">
+            <Label Text="Is Favorite?" Style="{StaticResource SmallLabelStyle}" VerticalOptions="Center" />
+            <Switch IsToggled="{Binding Author.IsFavorite, Mode=TwoWay}" />
+        </HorizontalStackLayout>
+        <HorizontalStackLayout Spacing="5">
+            <Button Text="Save" />
+            <Button Text="Cancel" />
+        </HorizontalStackLayout>
+    </VerticalStackLayout>
+</ContentPage>
