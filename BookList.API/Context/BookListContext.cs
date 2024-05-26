@@ -1,4 +1,4 @@
-﻿using BookList.API.Entities;
+﻿using BookList.Core.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BookList.API.Context;
