@@ -3,6 +3,7 @@ using BookList.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace Booklist.MAUI.PageModels;
 
@@ -28,9 +29,33 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
     }
 
     [RelayCommand]
-    private void AuthorSelected()
+    private void AuthorSelected() => IsAuthorSelected = SelectedAuthor is not null;
+
+    [RelayCommand]
+    private async Task DeleteSelectedAuthorAsync()
     {
-        IsAuthorSelected = SelectedAuthor is not null;
+        bool deleteConfirmed = await Shell.Current.CurrentPage.DisplayAlert("Delete?", $"Are you sure you want to delete author { SelectedAuthor.Name }?", "Yes, delete", "No, cancel");
+
+        if (!deleteConfirmed) { return; }
+
+        List<int> authorIds = [];
+        foreach (BookDTO book in await _dataService.GetBooksAsync())
+        {
+            foreach (AuthorDTO auth in book.Authors)
+            {
+                authorIds.Add(auth.Id);
+            }
+        }
+
+        if (authorIds.Contains(SelectedAuthor.Id))
+        {
+            await Shell.Current.DisplayAlert("Error!", "Cannot delete author since it is associated with one or more books.", "OK");
+            return;
+        }
+
+        await _dataService.DeleteAuthorAsync(SelectedAuthor.Id);
+        await LoadDataAsync();
+        SelectedAuthor = null!;
     }
 
     private async Task LoadDataAsync() =>

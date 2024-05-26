@@ -99,4 +99,76 @@ public class HttpDataService : IDataService
         }
         catch (Exception) { throw; }
     }
+
+    public async Task DeleteBookAsync(int id)
+    {
+        if (id < 1) { return; }
+
+        BookDTO book = await GetBookAsync(id);
+
+        if (book is not null)
+        {
+            try
+            {
+                HttpResponseMessage response = await _client.DeleteAsync($"/book/{id}");
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception) { throw; };
+        }
+    }
+
+    public async Task DeleteGenreAsync(int id)
+    {
+        if (id < 1) { return; }
+
+        GenreDTO genre = await GetGenreAsync(id);
+
+        if (genre is not null)
+        {
+            if ((await GetBooksAsync())
+                .Select(b => b.Genre)
+                .Select(g => g.Id)
+                .Contains(id))
+            {
+                return;
+            }
+            try
+            {
+                HttpResponseMessage response = await _client.DeleteAsync($"/genre/{id}");
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception) { throw; }
+        }
+    }
+
+    public async Task DeleteAuthorAsync(int id)
+    {
+        if (id < 1) { return; }
+
+        AuthorDTO author = await GetAuthorAsync(id);
+
+        if (author is not null)
+        {
+            List<int> authorIds = [];
+            foreach (BookDTO book in await GetBooksAsync())
+            {
+                foreach (AuthorDTO auth in book.Authors)
+                {
+                    authorIds.Add(auth.Id);
+                }
+            }
+
+            if (authorIds.Contains(id))
+            {
+                return;
+            }
+            
+            try
+            {
+                HttpResponseMessage response = await _client.DeleteAsync($"/author/{id}");
+                response.EnsureSuccessStatusCode();
+            }
+            catch (Exception) { throw; }
+        }
+    }
 }

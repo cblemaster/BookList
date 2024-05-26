@@ -22,7 +22,31 @@ var app = builder.Build();
 app.MapGet("/", () => "Hello World!");
 
 // Create Genre
+
 // Delete Genre
+app.MapDelete("/genre/{id:int}", async Task<Results<BadRequest<string>, NoContent, NotFound<string>>> (Context context, int id) =>
+{
+    if (id < 1)
+    {
+        return TypedResults.BadRequest("Invalid genre id.");
+    }
+
+    if (await context.Genres.Include(g => g.Books).SingleOrDefaultAsync(g => g.Id == id) is Genre genre)
+    {
+        if (genre.Books.Count != 0)
+        {
+            return TypedResults.BadRequest("Cannot delete genre since it is associated with one or more books.");
+        }
+
+        context.Genres.Remove(genre);
+        await context.SaveChangesAsync();
+
+        return TypedResults.NoContent();
+    }
+
+    return TypedResults.NotFound("Unable to find genre to delete.");
+});
+
 // Update Genre
 // Get Genres
 app.MapGet("/genre", Results<NotFound<string>, Ok<IEnumerable<GenreDTO>>> (Context context) =>
@@ -49,7 +73,31 @@ app.MapGet("/genre/{id:int}", async Task<Results<BadRequest<string>, Ok<GenreDTO
 });
 
 // Create Author
+
 // Delete Author
+app.MapDelete("/author/{id:int}", async Task<Results<BadRequest<string>, NoContent, NotFound<string>>> (Context context, int id) =>
+{
+    if (id < 1)
+    {
+        return TypedResults.BadRequest("Invalid author id.");
+    }
+
+    if (await context.Authors.Include(a => a.Books).SingleOrDefaultAsync(a => a.Id == id) is Author author)
+    {
+        if (author.Books.Count != 0)
+        {
+            return TypedResults.BadRequest("Cannot delete author since it is associated with one or more books.");
+        }
+
+        context.Authors.Remove(author);
+        await context.SaveChangesAsync();
+
+        return TypedResults.NoContent();
+    }
+
+    return TypedResults.NotFound("Unable to find author to delete.");
+});
+
 // Update Author
 // Get Authors
 app.MapGet("/author", Results<NotFound<string>, Ok<IEnumerable<AuthorDTO>>> (Context context) =>
@@ -76,7 +124,28 @@ app.MapGet("/author/{id:int}", async Task<Results<BadRequest<string>, Ok<AuthorD
 });
 
 // Create Book
+
 // Delete Book
+app.MapDelete("/book/{id:int}", async Task<Results<BadRequest<string>, NoContent, NotFound<string>>> (Context context, int id) =>
+{
+    if (id < 1)
+    {
+        return TypedResults.BadRequest("Invalid book id.");
+    }
+
+    if (await context.Books.Include(b => b.Authors).SingleOrDefaultAsync(b => b.Id == id) is Book book)
+    {
+        book.Authors.Clear();
+        await context.SaveChangesAsync();
+        context.Books.Remove(book);
+        await context.SaveChangesAsync();
+
+        return TypedResults.NoContent();
+    }
+
+    return TypedResults.NotFound("Unable to find book to delete.");
+});
+
 // Update Book
 
 // Get Books

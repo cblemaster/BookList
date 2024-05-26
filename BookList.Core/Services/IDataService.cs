@@ -10,4 +10,7 @@ public interface IDataService
     Task<IEnumerable<BookDTO>> GetBooksAsync();
     Task<GenreDTO> GetGenreAsync(int id);
     Task<IEnumerable<GenreDTO>> GetGenresAsync();
+    Task DeleteBookAsync(int id);
+    Task DeleteGenreAsync(int id);
+    Task DeleteAuthorAsync(int id);
 }

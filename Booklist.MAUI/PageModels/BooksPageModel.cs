@@ -28,9 +28,18 @@ public partial class BooksPageModel(IDataService dataService) : ObservableObject
     }
 
     [RelayCommand]
-    private void BookSelected()
+    private void BookSelected() => IsBookSelected = SelectedBook is not null;
+
+    [RelayCommand]
+    private async Task DeleteSelectedBookAsync()
     {
-        IsBookSelected = SelectedBook is not null;
+        bool deleteConfirmed = await Shell.Current.CurrentPage.DisplayAlert("Delete?", $"Are you sure you want to delete book {SelectedBook.Title}?", "Yes, delete", "No, cancel");
+
+        if (!deleteConfirmed) { return; }
+
+        await _dataService.DeleteBookAsync(SelectedBook.Id);
+        await LoadDataAsync();
+        SelectedBook = null!;
     }
 
     private async Task LoadDataAsync() =>

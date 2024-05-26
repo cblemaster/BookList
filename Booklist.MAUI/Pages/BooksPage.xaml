@@ -64,7 +64,9 @@
         <HorizontalStackLayout Grid.Row="1" Spacing="5">
             <Button Text="Create New Book" />
             <Button IsEnabled="{Binding IsBookSelected, Mode=OneWay}" Text="Update Selected Book" />
-            <Button IsEnabled="{Binding IsBookSelected, Mode=OneWay}" Text="Delete Selected Book" />
+            <Button Command="{Binding DeleteSelectedBookCommand}"
+                    IsEnabled="{Binding IsBookSelected, Mode=OneWay}"
+                    Text="Delete Selected Book" />
         </HorizontalStackLayout>
     </Grid>
 </ContentPage>
