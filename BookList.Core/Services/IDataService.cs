@@ -13,4 +13,6 @@ public interface IDataService
     Task DeleteBookAsync(int id);
     Task DeleteGenreAsync(int id);
     Task DeleteAuthorAsync(int id);
+    Task<bool> DoesGenreHaveBooks(int id);
+    Task<bool> DoesAuthorHaveBooks(int id);
 }

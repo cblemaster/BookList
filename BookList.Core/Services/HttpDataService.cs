@@ -125,13 +125,7 @@ public class HttpDataService : IDataService
 
         if (genre is not null)
         {
-            if ((await GetBooksAsync())
-                .Select(b => b.Genre)
-                .Select(g => g.Id)
-                .Contains(id))
-            {
-                return;
-            }
+            if (await DoesGenreHaveBooks(id)) { return; }
             try
             {
                 HttpResponseMessage response = await _client.DeleteAsync($"/genre/{id}");
@@ -149,19 +143,7 @@ public class HttpDataService : IDataService
 
         if (author is not null)
         {
-            List<int> authorIds = [];
-            foreach (BookDTO book in await GetBooksAsync())
-            {
-                foreach (AuthorDTO auth in book.Authors)
-                {
-                    authorIds.Add(auth.Id);
-                }
-            }
-
-            if (authorIds.Contains(id))
-            {
-                return;
-            }
+            if (await DoesAuthorHaveBooks(id)) { return; }
             
             try
             {
@@ -171,4 +153,34 @@ public class HttpDataService : IDataService
             catch (Exception) { throw; }
         }
     }
+
+    public async Task<bool> DoesGenreHaveBooks(int id)
+    {
+        if ((await GetBooksAsync())
+                .Select(b => b.Genre)
+                .Select(g => g.Id)
+                .Contains(id))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public async Task<bool> DoesAuthorHaveBooks(int id)
+    {
+        List<int> authorIds = [];
+        foreach (BookDTO book in await GetBooksAsync())  //todo: refactor using linq
+        {
+            foreach (AuthorDTO auth in book.Authors)
+            {
+                authorIds.Add(auth.Id);
+            }
+        }
+        if (authorIds.Contains(id))
+        {
+            return true;
+        }
+        return false;
+    }
+
 }

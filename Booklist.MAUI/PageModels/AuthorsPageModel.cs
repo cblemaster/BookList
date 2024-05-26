@@ -38,16 +38,7 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
 
         if (!deleteConfirmed) { return; }
 
-        List<int> authorIds = [];
-        foreach (BookDTO book in await _dataService.GetBooksAsync())
-        {
-            foreach (AuthorDTO auth in book.Authors)
-            {
-                authorIds.Add(auth.Id);
-            }
-        }
-
-        if (authorIds.Contains(SelectedAuthor.Id))
+        if (await _dataService.DoesAuthorHaveBooks(SelectedAuthor.Id))
         {
             await Shell.Current.DisplayAlert("Error!", "Cannot delete author since it is associated with one or more books.", "OK");
             return;

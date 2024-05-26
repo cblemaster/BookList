@@ -37,10 +37,7 @@ public partial class GenresPageModel(IDataService dataService) : ObservableObjec
 
         if (!deleteConfirmed) { return; }
 
-        if ((await _dataService.GetBooksAsync())
-                .Select(b => b.Genre)
-                .Select(g => g.Id)
-                .Contains(SelectedGenre.Id))
+        if (await _dataService.DoesGenreHaveBooks(SelectedGenre.Id))
         {
             await Shell.Current.DisplayAlert("Error!", "Cannot delete genre since it is associated with one or more books.", "OK");
             return;
