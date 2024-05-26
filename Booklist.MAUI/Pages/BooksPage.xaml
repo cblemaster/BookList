@@ -1,12 +1,48 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pagemodels="clr-namespace:Booklist.MAUI.PageModels"
+             xmlns:dto="clr-namespace:BookList.Core.DTO;assembly=BookList.Core"
              x:Class="Booklist.MAUI.Pages.BooksPage"
+             x:DataType="{x:Type pagemodels:BooksPageModel}"
              Title="Books Page">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <ContentPage.Behaviors>
+        <toolkit:EventToCommandBehavior EventName="Appearing" Command="{Binding PageAppearingCommand, Mode=OneWay}" />
+    </ContentPage.Behaviors>
+    <Grid>
+        <CollectionView ItemsSource="{Binding Books, Mode=OneWay}" SelectionMode="Single">
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type dto:BookDTO}">
+                    <Frame>
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Title, StringFormat='Title: {0}', Mode=OneWay}" />
+                            <Label Text="{Binding Subtitle, StringFormat='Subtitle: {0}', Mode=OneWay}" />
+                            <Label Text="{Binding Publisher, StringFormat='Publisher: {0}', Mode=OneWay}" />
+                            <Label Text="{Binding PageCount, StringFormat='Page Count: {0}', Mode=OneWay}" />
+                            <Label Text="{Binding IsFavorite, StringFormat='Is Favorite?: {0}', Mode=OneWay}" />
+                            <Label Text="{Binding Description, StringFormat='Description: {0}', Mode=OneWay}" />
+                            <Label Text="{Binding Genre.Name, StringFormat='Genre: {0}', Mode=OneWay}" />
+                            <VerticalStackLayout>
+                                <Label Text="Author(s):" />
+                                <CollectionView ItemsSource="{Binding Authors, Mode=OneWay}" SelectionMode="None">
+                                    <CollectionView.ItemsLayout>
+                                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="3" />
+                                    </CollectionView.ItemsLayout>
+                                    <CollectionView.ItemTemplate>
+                                        <DataTemplate x:DataType="{x:Type dto:AuthorDTO}">
+                                            <Label Text="{Binding Name, Mode=OneWay}" />
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
 </ContentPage>
