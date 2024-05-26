@@ -1,4 +1,5 @@
-﻿using Booklist.MAUI.Pages;
+﻿using Booklist.MAUI.PageModels;
+using Booklist.MAUI.Pages;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 
@@ -18,9 +19,12 @@ namespace Booklist.MAUI
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
                 .Services.AddSingleton<AppShell>()
-                         .AddSingleton<BooksPage>()
-                         .AddSingleton<GenresPage>()
-                         .AddSingleton<AuthorsPage>();
+                         .AddTransient<BooksPage>()
+                         .AddTransient<GenresPage>()
+                         .AddTransient<AuthorsPage>()
+                         .AddTransient<BooksPageModel>()
+                         .AddTransient<GenresPageModel>()
+                         .AddTransient<AuthorsPageModel>();
 
 #if DEBUG
     		builder.Logging.AddDebug();
