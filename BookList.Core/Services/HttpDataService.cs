@@ -1,5 +1,6 @@
 ﻿using BookList.Core.DTO;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace BookList.Core.Services;
 
@@ -171,6 +172,25 @@ public class HttpDataService : IDataService
             }
         }
         return authorIds.Contains(id);
+    }
+
+    public async Task<AuthorDTO> CreateAuthorAsync(CreateUpdateAuthorDTO authorToCreate)
+    {
+        IEnumerable<string> existingAuthorNames = (await GetAuthorsAsync())
+            .Select(a => a.Name);
+        if (existingAuthorNames is not null && existingAuthorNames.Contains(authorToCreate.Name))
+            { return new(0, "Author name already used.", false); }
+
+        StringContent content = new(JsonSerializer.Serialize(authorToCreate));
+        content.Headers.ContentType = new("application/json");
+
+        try
+        {
+            HttpResponseMessage response = await _client.PostAsync("/author", content);
+            response.EnsureSuccessStatusCode();
+            return await GetAuthorAsync(await response.Content.ReadFromJsonAsync<AuthorDTO>() is AuthorDTO newAuthor ? newAuthor.Id : 0);
+        }
+        catch (Exception) { throw; }
     }
 
 }

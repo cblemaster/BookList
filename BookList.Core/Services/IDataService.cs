@@ -15,4 +15,5 @@ public interface IDataService
     Task DeleteAuthorAsync(int id);
     Task<bool> DoesGenreHaveBooks(int id);
     Task<bool> DoesAuthorHaveBooks(int id);
+    Task<AuthorDTO> CreateAuthorAsync(CreateUpdateAuthorDTO authorToCreate);
 }
