@@ -13,8 +13,25 @@ public partial class GenresPageModel(IDataService dataService) : ObservableObjec
     [ObservableProperty]
     private ObservableCollection<GenreDTO> _genres = default!;
 
+    [ObservableProperty]
+    private GenreDTO _selectedGenre = default!;
+
+    [ObservableProperty]
+    private bool _isGenreSelected;
+
     [RelayCommand]
-    private async Task PageAppearingAsync() => await LoadDataAsync();
+    private async Task PageAppearingAsync()
+    {
+        await LoadDataAsync();
+        SelectedGenre = null!;
+        IsGenreSelected = false;
+    }
+
+    [RelayCommand]
+    private void GenreSelected()
+    {
+        IsGenreSelected = SelectedGenre is not null;
+    }
 
     private async Task LoadDataAsync() =>
         Genres = new ObservableCollection<GenreDTO>

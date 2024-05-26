@@ -13,8 +13,25 @@ public partial class BooksPageModel(IDataService dataService) : ObservableObject
     [ObservableProperty]
     private ObservableCollection<BookDTO> _books = default!;
 
+    [ObservableProperty]
+    private BookDTO _selectedBook = default!;
+
+    [ObservableProperty]
+    private bool _isBookSelected;
+
     [RelayCommand]
-    private async Task PageAppearingAsync() => await LoadDataAsync();
+    private async Task PageAppearingAsync()
+    {
+        await LoadDataAsync();
+        SelectedBook = null!;
+        IsBookSelected = false;
+    }
+
+    [RelayCommand]
+    private void BookSelected()
+    {
+        IsBookSelected = SelectedBook is not null;
+    }
 
     private async Task LoadDataAsync() =>
         Books = new ObservableCollection<BookDTO>

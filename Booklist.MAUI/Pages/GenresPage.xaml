@@ -16,7 +16,9 @@
         <converters:BoolToYesNoConverter x:Key="boolyesno" />
     </ContentPage.Resources>
     <Grid RowDefinitions="9*,1*" Margin="10">
-        <CollectionView ItemsSource="{Binding Genres, Mode=OneWay}" 
+        <CollectionView ItemsSource="{Binding Genres, Mode=OneWay}"
+                        SelectedItem="{Binding SelectedGenre, Mode=TwoWay}"
+                        SelectionChangedCommand="{Binding GenreSelectedCommand, Mode=OneWay}"
                         SelectionMode="Single">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
@@ -36,8 +38,8 @@
         </CollectionView>
         <HorizontalStackLayout Grid.Row="1" Spacing="5">
             <Button Text="Create New Genre" />
-            <Button Text="Update Selected Genre" />
-            <Button Text="Delete Selected Genre" />
+            <Button IsEnabled="{Binding IsGenreSelected, Mode=OneWay}" Text="Update Selected Genre" />
+            <Button IsEnabled="{Binding IsGenreSelected, Mode=OneWay}" Text="Delete Selected Genre" />
         </HorizontalStackLayout>
     </Grid>
 </ContentPage>

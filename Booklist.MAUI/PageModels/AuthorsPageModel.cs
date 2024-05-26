@@ -13,8 +13,25 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
     [ObservableProperty]
     private ObservableCollection<AuthorDTO> _authors = default!;
 
+    [ObservableProperty]
+    private AuthorDTO _selectedAuthor = default!;
+
+    [ObservableProperty]
+    private bool _isAuthorSelected;
+
     [RelayCommand]
-    private async Task PageAppearingAsync() => await LoadDataAsync();
+    private async Task PageAppearingAsync()
+    {
+        await LoadDataAsync();
+        SelectedAuthor = null!;
+        IsAuthorSelected = false;
+    }
+
+    [RelayCommand]
+    private void AuthorSelected()
+    {
+        IsAuthorSelected = SelectedAuthor is not null;
+    }
 
     private async Task LoadDataAsync() =>
         Authors = new ObservableCollection<AuthorDTO>

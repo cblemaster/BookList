@@ -16,7 +16,9 @@
         <converters:BoolToYesNoConverter x:Key="boolyesno" />
     </ContentPage.Resources>
     <Grid RowDefinitions="9*,1*" Margin="10">
-        <CollectionView ItemsSource="{Binding Books, Mode=OneWay}" 
+        <CollectionView ItemsSource="{Binding Books, Mode=OneWay}"
+                        SelectedItem="{Binding SelectedBook, Mode=TwoWay}"
+                        SelectionChangedCommand="{Binding BookSelectedCommand, Mode=OneWay}"  
                         SelectionMode="Single">
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="5" />
@@ -61,8 +63,8 @@
         </CollectionView>
         <HorizontalStackLayout Grid.Row="1" Spacing="5">
             <Button Text="Create New Book" />
-            <Button Text="Update Selected Book" />
-            <Button Text="Delete Selected Book" />
+            <Button IsEnabled="{Binding IsBookSelected, Mode=OneWay}" Text="Update Selected Book" />
+            <Button IsEnabled="{Binding IsBookSelected, Mode=OneWay}" Text="Delete Selected Book" />
         </HorizontalStackLayout>
     </Grid>
 </ContentPage>
