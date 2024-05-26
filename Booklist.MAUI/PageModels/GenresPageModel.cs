@@ -1,12 +1,23 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using BookList.Core.DTO;
+using BookList.Core.Services;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Collections.ObjectModel;
 
 namespace Booklist.MAUI.PageModels;
 
-public partial class GenresPageModel : ObservableObject
+public partial class GenresPageModel(IDataService dataService) : ObservableObject
 {
+    private readonly IDataService _dataService = dataService;
+
+    [ObservableProperty]
+    private ObservableCollection<GenreDTO> _genres = default!;
+    
+    [RelayCommand]
+    private async Task PageAppearingAsync() => await LoadDataAsync();
+
+    private async Task LoadDataAsync()
+    {
+        Genres = new ObservableCollection<GenreDTO>(await _dataService.GetGenresAsync());
+    }
 }
