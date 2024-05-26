@@ -16,8 +16,7 @@ public partial class BooksPageModel(IDataService dataService) : ObservableObject
     [RelayCommand]
     private async Task PageAppearingAsync() => await LoadDataAsync();
 
-    private async Task LoadDataAsync()
-    {
-        Books = new ObservableCollection<BookDTO>(await _dataService.GetBooksAsync());
-    }
+    private async Task LoadDataAsync() =>
+        Books = new ObservableCollection<BookDTO>
+            (await _dataService.GetBooksAsync());
 }

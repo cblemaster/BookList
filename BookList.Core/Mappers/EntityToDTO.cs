@@ -5,10 +5,8 @@ namespace BookList.Core.Mappers;
 
 public static class EntityToDTO
 {
-    public static GenreDTO MapGenreEntityToDTO(Genre entity)
-    {
-        return new(entity.Id, entity.Name, entity.IsFavorite);
-    }
+    public static GenreDTO MapGenreEntityToDTO(Genre entity) =>
+        new(entity.Id, entity.Name, entity.IsFavorite);
 
     public static IEnumerable<GenreDTO> MapGenreEntitiesToDTOs(IEnumerable<Genre> entities)
     {
@@ -21,10 +19,8 @@ public static class EntityToDTO
         return dtos.AsEnumerable();
     }
 
-    public static AuthorDTO MapAuthorEntityToDTO(Author entity)
-    {
-        return new(entity.Id, entity.Name, entity.IsFavorite);
-    }
+    public static AuthorDTO MapAuthorEntityToDTO(Author entity) =>
+        new(entity.Id, entity.Name, entity.IsFavorite);
 
     public static IEnumerable<AuthorDTO> MapAuthorEntitiesToDTOs(IEnumerable<Author> entities)
     {
@@ -37,12 +33,11 @@ public static class EntityToDTO
         return dtos.AsEnumerable();
     }
 
-    public static BookDTO MapBookEntityToDTO(Book entity)
-    {
-        return new(entity.Id, entity.Title, entity.Subtitle, entity.IsFavorite,
-            entity.Publisher, entity.PageCount, entity.Description, 
-            MapGenreEntityToDTO(entity.Genre), MapAuthorEntitiesToDTOs(entity.Authors));
-    }
+    public static BookDTO MapBookEntityToDTO(Book entity) =>
+        new(entity.Id, entity.Title, entity.Subtitle, entity.IsFavorite,
+            entity.Publisher, entity.PageCount, entity.Description,
+            MapGenreEntityToDTO(entity.Genre), 
+            MapAuthorEntitiesToDTOs(entity.Authors));
 
     public static IEnumerable<BookDTO> MapBookEntitiesToDTOs(IEnumerable<Book> entities)
     {

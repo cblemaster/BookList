@@ -12,12 +12,11 @@ public partial class GenresPageModel(IDataService dataService) : ObservableObjec
 
     [ObservableProperty]
     private ObservableCollection<GenreDTO> _genres = default!;
-    
+
     [RelayCommand]
     private async Task PageAppearingAsync() => await LoadDataAsync();
 
-    private async Task LoadDataAsync()
-    {
-        Genres = new ObservableCollection<GenreDTO>(await _dataService.GetGenresAsync());
-    }
+    private async Task LoadDataAsync() =>
+        Genres = new ObservableCollection<GenreDTO>
+            (await _dataService.GetGenresAsync());
 }

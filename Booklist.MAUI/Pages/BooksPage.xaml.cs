@@ -4,9 +4,9 @@ namespace Booklist.MAUI.Pages;
 
 public partial class BooksPage : ContentPage
 {
-	public BooksPage(BooksPageModel pageModel)
-	{
-		InitializeComponent();
+    public BooksPage(BooksPageModel pageModel)
+    {
+        InitializeComponent();
         BindingContext = pageModel;
-	}
+    }
 }

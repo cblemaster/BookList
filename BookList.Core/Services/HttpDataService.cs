@@ -24,7 +24,7 @@ public class HttpDataService : IDataService
             {
                 books = response.Content.ReadFromJsonAsAsyncEnumerable<BookDTO>().ToBlockingEnumerable();
             }
-            return books is not null ? books : Enumerable.Empty<BookDTO>();
+            return books is not null ? books : [];
         }
         catch (Exception) { throw; }
     }
@@ -35,8 +35,11 @@ public class HttpDataService : IDataService
         {
             HttpResponseMessage response = await _client.GetAsync($"/book/{id}");
             return response.IsSuccessStatusCode && response.Content is not null
-                ? await response.Content.ReadFromJsonAsync<BookDTO>() ?? BookDTO.NotFound
-                : BookDTO.NotFound;
+                ? await response.Content.ReadFromJsonAsync<BookDTO>()
+                    ?? new(0, "NotFound", string.Empty, false, null, null,
+                       null, new(0, "NotFound", false), [new(0, "NotFound", false)])
+                : new(0, "NotFound", string.Empty, false, null, null, null, 
+                    new(0, "NotFound", false), [new(0, "NotFound", false)]);
         }
         catch (Exception) { throw; }
     }
@@ -52,7 +55,7 @@ public class HttpDataService : IDataService
             {
                 genres = response.Content.ReadFromJsonAsAsyncEnumerable<GenreDTO>().ToBlockingEnumerable();
             }
-            return genres is not null ? genres : Enumerable.Empty<GenreDTO>();
+            return genres is not null ? genres : [];
         }
         catch (Exception) { throw; }
     }
@@ -63,8 +66,8 @@ public class HttpDataService : IDataService
         {
             HttpResponseMessage response = await _client.GetAsync($"/genre/{id}");
             return response.IsSuccessStatusCode && response.Content is not null
-                ? await response.Content.ReadFromJsonAsync<GenreDTO>() ?? GenreDTO.NotFound
-                : GenreDTO.NotFound;
+                ? await response.Content.ReadFromJsonAsync<GenreDTO>() ?? new(0, "NotFound", false)
+                : new(0, "NotFound", false);
         }
         catch (Exception) { throw; }
     }
@@ -80,7 +83,7 @@ public class HttpDataService : IDataService
             {
                 authors = response.Content.ReadFromJsonAsAsyncEnumerable<AuthorDTO>().ToBlockingEnumerable();
             }
-            return authors is not null ? authors : Enumerable.Empty<AuthorDTO>();
+            return authors is not null ? authors : [];
         }
         catch (Exception) { throw; }
     }
@@ -91,8 +94,8 @@ public class HttpDataService : IDataService
         {
             HttpResponseMessage response = await _client.GetAsync($"/author/{id}");
             return response.IsSuccessStatusCode && response.Content is not null
-                ? await response.Content.ReadFromJsonAsync<AuthorDTO>() ?? AuthorDTO.NotFound
-                : AuthorDTO.NotFound;
+                ? await response.Content.ReadFromJsonAsync<AuthorDTO>() ?? new(0, "NotFound", false)
+                : new(0, "NotFound", false);
         }
         catch (Exception) { throw; }
     }

@@ -16,8 +16,7 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
     [RelayCommand]
     private async Task PageAppearingAsync() => await LoadDataAsync();
 
-    private async Task LoadDataAsync()
-    {
-        Authors = new ObservableCollection<AuthorDTO>(await _dataService.GetAuthorsAsync());
-    }
+    private async Task LoadDataAsync() =>
+        Authors = new ObservableCollection<AuthorDTO>
+            (await _dataService.GetAuthorsAsync());
 }
