@@ -32,12 +32,11 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
     private void AuthorSelected() => IsAuthorSelected = SelectedAuthor is not null;
 
     [RelayCommand]
-    private async Task CreateAuthorAsync()
-    {
-        await Shell.Current.Navigation.PushModalAsync(new CreateUpdateAuthorPage(new()));
-    }
-    
-    
+    private async Task CreateAuthorAsync() =>
+        await Shell.Current.Navigation
+            .PushModalAsync(new CreateUpdateAuthorPage(new()));
+
+
     [RelayCommand]
     private async Task DeleteSelectedAuthorAsync()
     {

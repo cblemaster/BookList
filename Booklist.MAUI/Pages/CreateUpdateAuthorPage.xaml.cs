@@ -5,9 +5,9 @@ namespace Booklist.MAUI.Pages;
 
 public partial class CreateUpdateAuthorPage : ContentPage
 {
-	public CreateUpdateAuthorPage(CreateUpdateAuthorDTO author)
-	{
-		InitializeComponent();
+    public CreateUpdateAuthorPage(CreateUpdateAuthorDTO author)
+    {
+        InitializeComponent();
 
         Shell shell = Shell.Current;
 

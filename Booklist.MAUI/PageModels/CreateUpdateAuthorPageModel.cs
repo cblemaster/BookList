@@ -3,7 +3,6 @@ using BookList.Core.Services;
 using BookList.Core.Validation;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Microsoft.Maui.Controls;
 
 namespace Booklist.MAUI.PageModels;
 
@@ -18,7 +17,7 @@ public partial class CreateUpdateAuthorPageModel(IDataService dataService) : Obs
     private async Task SaveClicked()
     {
         ValidationResult validation = Author.Validate();
-        
+
         if (!validation.IsValid)
         {
             await Shell.Current.DisplayAlert("Invalid Data!", validation.ErrorMessage, "OK");

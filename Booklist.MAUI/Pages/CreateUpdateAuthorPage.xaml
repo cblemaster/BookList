@@ -19,7 +19,9 @@
             </Entry.Behaviors>
         </Entry>
         <HorizontalStackLayout Spacing="5">
-            <Label Text="Is Favorite?" Style="{StaticResource SmallLabelStyle}" VerticalOptions="Center" />
+            <Label Text="Is Favorite?"
+                   Style="{StaticResource SmallLabelStyle}"
+                   VerticalOptions="Center" />
             <Switch IsToggled="{Binding Author.IsFavorite, Mode=TwoWay}" />
         </HorizontalStackLayout>
         <HorizontalStackLayout Spacing="5">
