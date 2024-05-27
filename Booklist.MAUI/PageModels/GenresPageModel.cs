@@ -1,4 +1,5 @@
-﻿using BookList.Core.DTO;
+﻿using Booklist.MAUI.Pages;
+using BookList.Core.DTO;
 using BookList.Core.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -29,6 +30,11 @@ public partial class GenresPageModel(IDataService dataService) : ObservableObjec
 
     [RelayCommand]
     private void GenreSelected() => IsGenreSelected = SelectedGenre is not null;
+
+    [RelayCommand]
+    private async Task CreateGenreAsync() =>
+        await Shell.Current.Navigation
+            .PushModalAsync(new CreateUpdateGenrePage(new()));
 
     [RelayCommand]
     private async Task DeleteSelectedGenreAsync()

@@ -37,7 +37,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
         <HorizontalStackLayout Grid.Row="1" Spacing="5">
-            <Button Text="Create New Genre" />
+            <Button Command="{Binding CreateGenreCommand, Mode=OneWay}" Text="Create New Genre" />
             <Button IsEnabled="{Binding IsGenreSelected, Mode=OneWay}" Text="Update Selected Genre" />
             <Button Command="{Binding DeleteSelectedGenreCommand}"
                     IsEnabled="{Binding IsGenreSelected, Mode=OneWay}"
