@@ -23,8 +23,8 @@
             <Switch IsToggled="{Binding Author.IsFavorite, Mode=TwoWay}" />
         </HorizontalStackLayout>
         <HorizontalStackLayout Spacing="5">
-            <Button Text="Save" />
-            <Button Text="Cancel" />
+            <Button Command="{Binding SaveClickedCommand}" Text="Save" />
+            <Button Command="{Binding CancelClickedCommand}" Text="Cancel" />
         </HorizontalStackLayout>
     </VerticalStackLayout>
 </ContentPage>
