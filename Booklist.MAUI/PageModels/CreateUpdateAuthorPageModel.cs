@@ -24,6 +24,12 @@ public partial class CreateUpdateAuthorPageModel(IDataService dataService) : Obs
             return;
         }
 
+        if (await _dataService.IsAuthorNameAlreadyUsed(Author.Name))
+        {
+            await Shell.Current.DisplayAlert("Error!", $"Author name { Author.Name } is already used.", "OK");
+            return;
+        }
+
         await _dataService.CreateAuthorAsync(Author);
         await Shell.Current.Navigation.PopModalAsync();
     }

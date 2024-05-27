@@ -174,11 +174,16 @@ public class HttpDataService : IDataService
         return authorIds.Contains(id);
     }
 
-    public async Task<AuthorDTO> CreateAuthorAsync(CreateUpdateAuthorDTO authorToCreate)
+    public async Task<bool> IsAuthorNameAlreadyUsed(string name)
     {
         IEnumerable<string> existingAuthorNames = (await GetAuthorsAsync())
             .Select(a => a.Name);
-        if (existingAuthorNames is not null && existingAuthorNames.Contains(authorToCreate.Name))
+        return existingAuthorNames is not null && existingAuthorNames.Contains(name);
+    }
+
+    public async Task<AuthorDTO> CreateAuthorAsync(CreateUpdateAuthorDTO authorToCreate)
+    {
+        if (await IsAuthorNameAlreadyUsed(authorToCreate.Name))
             { return new(0, "Author name already used.", false); }
 
         StringContent content = new(JsonSerializer.Serialize(authorToCreate));
@@ -192,5 +197,4 @@ public class HttpDataService : IDataService
         }
         catch (Exception) { throw; }
     }
-
 }
