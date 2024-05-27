@@ -14,63 +14,40 @@ public class HttpDataService : IDataService
         BaseAddress = new Uri(BASE_URI)
     };
 
-    public async Task<IEnumerable<BookDTO>> GetBooksAsync()
+    public async Task<AuthorDTO> CreateAuthorAsync(CreateUpdateAuthorDTO authorToCreate)
     {
-        IEnumerable<BookDTO> books = [];
+        if (await IsAuthorNameAlreadyUsed(authorToCreate.Name))
+        { return new(0, "Author name already used.", false); }
+
+        StringContent content = new(JsonSerializer.Serialize(authorToCreate));
+        content.Headers.ContentType = new("application/json");
 
         try
         {
-            HttpResponseMessage response = await _client.GetAsync("/book");
-            if (response.IsSuccessStatusCode && response.Content is not null)
+            HttpResponseMessage response = await _client.PostAsync("/author", content);
+            response.EnsureSuccessStatusCode();
+            return await GetAuthorAsync(await response.Content.ReadFromJsonAsync<AuthorDTO>() is AuthorDTO newAuthor ? newAuthor.Id : 0);
+        }
+        catch (Exception) { throw; }
+    }
+
+    public async Task DeleteAuthorAsync(int id)
+    {
+        if (id < 1) { return; }
+
+        AuthorDTO author = await GetAuthorAsync(id);
+
+        if (author is not null)
+        {
+            if (await DoesAuthorHaveBooks(id)) { return; }
+
+            try
             {
-                books = response.Content.ReadFromJsonAsAsyncEnumerable<BookDTO>().ToBlockingEnumerable();
+                HttpResponseMessage response = await _client.DeleteAsync($"/author/{id}");
+                response.EnsureSuccessStatusCode();
             }
-            return books is not null ? books : [];
+            catch (Exception) { throw; }
         }
-        catch (Exception) { throw; }
-    }
-
-    public async Task<BookDTO> GetBookAsync(int id)
-    {
-        try
-        {
-            HttpResponseMessage response = await _client.GetAsync($"/book/{id}");
-            return response.IsSuccessStatusCode && response.Content is not null
-                ? await response.Content.ReadFromJsonAsync<BookDTO>()
-                    ?? new(0, "NotFound", string.Empty, false, null, null,
-                       null, new(0, "NotFound", false), [new(0, "NotFound", false)])
-                : new(0, "NotFound", string.Empty, false, null, null, null,
-                    new(0, "NotFound", false), [new(0, "NotFound", false)]);
-        }
-        catch (Exception) { throw; }
-    }
-
-    public async Task<IEnumerable<GenreDTO>> GetGenresAsync()
-    {
-        IEnumerable<GenreDTO> genres = [];
-
-        try
-        {
-            HttpResponseMessage response = await _client.GetAsync("/genre");
-            if (response.IsSuccessStatusCode && response.Content is not null)
-            {
-                genres = response.Content.ReadFromJsonAsAsyncEnumerable<GenreDTO>().ToBlockingEnumerable();
-            }
-            return genres is not null ? genres : [];
-        }
-        catch (Exception) { throw; }
-    }
-
-    public async Task<GenreDTO> GetGenreAsync(int id)
-    {
-        try
-        {
-            HttpResponseMessage response = await _client.GetAsync($"/genre/{id}");
-            return response.IsSuccessStatusCode && response.Content is not null
-                ? await response.Content.ReadFromJsonAsync<GenreDTO>() ?? new(0, "NotFound", false)
-                : new(0, "NotFound", false);
-        }
-        catch (Exception) { throw; }
     }
 
     public async Task<IEnumerable<AuthorDTO>> GetAuthorsAsync()
@@ -118,6 +95,54 @@ public class HttpDataService : IDataService
         }
     }
 
+    public async Task<IEnumerable<BookDTO>> GetBooksAsync()
+    {
+        IEnumerable<BookDTO> books = [];
+
+        try
+        {
+            HttpResponseMessage response = await _client.GetAsync("/book");
+            if (response.IsSuccessStatusCode && response.Content is not null)
+            {
+                books = response.Content.ReadFromJsonAsAsyncEnumerable<BookDTO>().ToBlockingEnumerable();
+            }
+            return books is not null ? books : [];
+        }
+        catch (Exception) { throw; }
+    }
+
+    public async Task<BookDTO> GetBookAsync(int id)
+    {
+        try
+        {
+            HttpResponseMessage response = await _client.GetAsync($"/book/{id}");
+            return response.IsSuccessStatusCode && response.Content is not null
+                ? await response.Content.ReadFromJsonAsync<BookDTO>()
+                    ?? new(0, "NotFound", string.Empty, false, null, null,
+                       null, new(0, "NotFound", false), [new(0, "NotFound", false)])
+                : new(0, "NotFound", string.Empty, false, null, null, null,
+                    new(0, "NotFound", false), [new(0, "NotFound", false)]);
+        }
+        catch (Exception) { throw; }
+    }
+
+    public async Task<GenreDTO> CreateGenreAsync(CreateUpdateGenreDTO genreToCreate)
+    {
+        if (await IsGenreNameAlreadyUsed(genreToCreate.Name))
+        { return new(0, "Genre name already used.", false); }
+
+        StringContent content = new(JsonSerializer.Serialize(genreToCreate));
+        content.Headers.ContentType = new("application/json");
+
+        try
+        {
+            HttpResponseMessage response = await _client.PostAsync("/genre", content);
+            response.EnsureSuccessStatusCode();
+            return await GetGenreAsync(await response.Content.ReadFromJsonAsync<GenreDTO>() is GenreDTO newGenre ? newGenre.Id : 0);
+        }
+        catch (Exception) { throw; }
+    }
+
     public async Task DeleteGenreAsync(int id)
     {
         if (id < 1) { return; }
@@ -136,30 +161,33 @@ public class HttpDataService : IDataService
         }
     }
 
-    public async Task DeleteAuthorAsync(int id)
+    public async Task<IEnumerable<GenreDTO>> GetGenresAsync()
     {
-        if (id < 1) { return; }
+        IEnumerable<GenreDTO> genres = [];
 
-        AuthorDTO author = await GetAuthorAsync(id);
-
-        if (author is not null)
+        try
         {
-            if (await DoesAuthorHaveBooks(id)) { return; }
-
-            try
+            HttpResponseMessage response = await _client.GetAsync("/genre");
+            if (response.IsSuccessStatusCode && response.Content is not null)
             {
-                HttpResponseMessage response = await _client.DeleteAsync($"/author/{id}");
-                response.EnsureSuccessStatusCode();
+                genres = response.Content.ReadFromJsonAsAsyncEnumerable<GenreDTO>().ToBlockingEnumerable();
             }
-            catch (Exception) { throw; }
+            return genres is not null ? genres : [];
         }
+        catch (Exception) { throw; }
     }
 
-    public async Task<bool> DoesGenreHaveBooks(int id) =>
-        (await GetBooksAsync())
-                .Select(b => b.Genre)
-                .Select(g => g.Id)
-                .Contains(id);
+    public async Task<GenreDTO> GetGenreAsync(int id)
+    {
+        try
+        {
+            HttpResponseMessage response = await _client.GetAsync($"/genre/{id}");
+            return response.IsSuccessStatusCode && response.Content is not null
+                ? await response.Content.ReadFromJsonAsync<GenreDTO>() ?? new(0, "NotFound", false)
+                : new(0, "NotFound", false);
+        }
+        catch (Exception) { throw; }
+    }
 
     public async Task<bool> DoesAuthorHaveBooks(int id)
     {
@@ -174,6 +202,12 @@ public class HttpDataService : IDataService
         return authorIds.Contains(id);
     }
 
+    public async Task<bool> DoesGenreHaveBooks(int id) =>
+        (await GetBooksAsync())
+                .Select(b => b.Genre)
+                .Select(g => g.Id)
+                .Contains(id);
+
     public async Task<bool> IsAuthorNameAlreadyUsed(string name)
     {
         IEnumerable<string> existingAuthorNames = (await GetAuthorsAsync())
@@ -181,20 +215,10 @@ public class HttpDataService : IDataService
         return existingAuthorNames is not null && existingAuthorNames.Contains(name);
     }
 
-    public async Task<AuthorDTO> CreateAuthorAsync(CreateUpdateAuthorDTO authorToCreate)
+    public async Task<bool> IsGenreNameAlreadyUsed(string name)
     {
-        if (await IsAuthorNameAlreadyUsed(authorToCreate.Name))
-            { return new(0, "Author name already used.", false); }
-
-        StringContent content = new(JsonSerializer.Serialize(authorToCreate));
-        content.Headers.ContentType = new("application/json");
-
-        try
-        {
-            HttpResponseMessage response = await _client.PostAsync("/author", content);
-            response.EnsureSuccessStatusCode();
-            return await GetAuthorAsync(await response.Content.ReadFromJsonAsync<AuthorDTO>() is AuthorDTO newAuthor ? newAuthor.Id : 0);
-        }
-        catch (Exception) { throw; }
+        IEnumerable<string> existingGenreNames = (await GetGenresAsync())
+            .Select(g => g.Name);
+        return existingGenreNames is not null && existingGenreNames.Contains(name);
     }
 }

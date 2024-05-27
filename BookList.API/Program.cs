@@ -23,6 +23,31 @@ var app = builder.Build();
 app.MapGet("/", () => "Hello World!");
 
 // Create Genre
+app.MapPost("/genre", async Task<Results<BadRequest<string>, Created<GenreDTO>>> (Context context, CreateUpdateGenreDTO genreToCreate) =>
+{
+    if (genreToCreate is null)
+    {
+        return TypedResults.BadRequest("No genre to create provided.");
+    }
+
+    if (context.Genres.Select(g => g.Name).Contains(genreToCreate.Name))
+    {
+        return TypedResults.BadRequest($"Genre name {genreToCreate.Name} is already used.");
+    }
+
+    ValidationResult validationResult = genreToCreate.Validate();
+
+    if (!validationResult.IsValid)
+    {
+        return TypedResults.BadRequest(validationResult.ErrorMessage);
+    }
+
+    Genre newGenre = DTOToEntity.MapCreateUpdateGenreDTOToAuthorEntity(genreToCreate);
+    context.Genres.Add(newGenre);
+    await context.SaveChangesAsync();
+
+    return TypedResults.Created($"/genre/{newGenre.Id}", EntityToDTO.MapGenreEntityToDTO(newGenre));
+});
 
 // Delete Genre
 app.MapDelete("/genre/{id:int}", async Task<Results<BadRequest<string>, NoContent, NotFound<string>>> (Context context, int id) =>

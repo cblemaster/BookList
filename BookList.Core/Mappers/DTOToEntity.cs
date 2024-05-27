@@ -14,4 +14,14 @@ public static class DTOToEntity
             IsFavorite = dto.IsFavorite,
         };
     }
+
+    public static Genre MapCreateUpdateGenreDTOToAuthorEntity(CreateUpdateGenreDTO dto)
+    {
+        return new()
+        {
+            Id = dto.Id,
+            Name = dto.Name,
+            IsFavorite = dto.IsFavorite,
+        };
+    }
 }
