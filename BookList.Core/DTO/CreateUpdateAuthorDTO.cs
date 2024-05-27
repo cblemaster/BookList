@@ -10,10 +10,8 @@ public class CreateUpdateAuthorDTO
 
     public ValidationResult Validate()
     {
-        if (!string.IsNullOrWhiteSpace(Name) && Name.Length > 0 && Name.Length <= 100)
-        {
-            return new() { IsValid = false, ErrorMessage = "Author name is required and must be between 1 and 100 characters." };
-        }
-        return new() { IsValid = true, ErrorMessage = string.Empty };
+        return !string.IsNullOrWhiteSpace(Name) && Name.Length > 0 && Name.Length <= 100
+            ? new() { IsValid = true, ErrorMessage = string.Empty }
+            : new() { IsValid = false, ErrorMessage = "Author name is required and must be between 1 and 100 characters." };
     }
 }
