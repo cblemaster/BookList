@@ -30,7 +30,7 @@ app.MapPost("/genre", async Task<Results<BadRequest<string>, Created<GenreDTO>>>
         return TypedResults.BadRequest("No genre to create provided.");
     }
 
-    if (context.Genres.Select(g => g.Name).Contains(genreToCreate.Name))
+    if (context.Genres.Select(g => g.Name).Distinct().Contains(genreToCreate.Name))
     {
         return TypedResults.BadRequest($"Genre name {genreToCreate.Name} is already used.");
     }
@@ -100,13 +100,15 @@ app.MapPut("/genre/{id:int}", async Task<Results<BadRequest<string>, NoContent>>
         return TypedResults.BadRequest("Unable to find genre to update.");
     }
 
-    if (dto.Name != entity.Name && context.Genres.Select(a => a.Name).Contains(dto.Name))
+    if (dto.Name != entity.Name && context.Genres.Select(a => a.Name).Distinct().Contains(dto.Name))
     {
         return TypedResults.BadRequest($"Genre name {dto.Name} is already used.");
     }
 
-    entity.Name = dto.Name; // todo: this belongs in the mapper
-    entity.IsFavorite = dto.IsFavorite;
+    entity = DTOToEntity.MapCreateUpdateGenreDTOToAuthorEntity(dto, entity);
+    
+    //entity.Name = dto.Name; // todo: this belongs in the mapper
+    //entity.IsFavorite = dto.IsFavorite;
 
     await context.SaveChangesAsync();
 
@@ -120,6 +122,21 @@ app.MapGet("/genre", Results<NotFound<string>, Ok<IEnumerable<GenreDTO>>> (Conte
     return genres is null || !genres.Any()
         ? TypedResults.NotFound("No genres found.")
         : TypedResults.Ok(genres.AsEnumerable());
+});
+
+// Get Genre with books by Id
+app.MapGet("/genrewithbooks/{id:int}", async Task<Results<BadRequest<string>, Ok<GenreWithBooksDTO>, NotFound<string>>> (Context context, int id) =>
+{
+    if (id < 1)
+    {
+        return TypedResults.BadRequest("Invalid genre id.");
+    }
+    if (await context.Genres.Include(g => g.Books).SingleOrDefaultAsync(g => g.Id == id) is Genre genre)
+    {
+        GenreWithBooksDTO dto = EntityToDTO.MapGenreWithBooksEntityToDTO(genre);
+        return TypedResults.Ok(dto);
+    }
+    return TypedResults.NotFound($"No genre with id {id} found.");
 });
 
 // Get Genre By Id
@@ -145,7 +162,7 @@ app.MapPost("/author", async Task<Results<BadRequest<string>, Created<AuthorDTO>
         return TypedResults.BadRequest("No author to create provided.");
     }
 
-    if (context.Authors.Select(a => a.Name).Contains(authorToCreate.Name))
+    if (context.Authors.Select(a => a.Name).Distinct().Contains(authorToCreate.Name))
     {
         return TypedResults.BadRequest($"Author name {authorToCreate.Name} is already used.");
     }
@@ -215,19 +232,20 @@ app.MapPut("/author/{id:int}", async Task<Results<BadRequest<string>, NoContent>
         return TypedResults.BadRequest("Unable to find author to update.");
     }
 
-    if (dto.Name != entity.Name && context.Authors.Select(a => a.Name).Contains(dto.Name))
+    if (dto.Name != entity.Name && context.Authors.Select(a => a.Name).Distinct().Contains(dto.Name))
     {
         return TypedResults.BadRequest($"Author name {dto.Name} is already used.");
     }
 
-    entity.Name = dto.Name; // todo: this belongs in the mapper
-    entity.IsFavorite = dto.IsFavorite;
+    entity = DTOToEntity.MapCreateUpdateAuthorDTOToAuthorEntity(dto, entity);
+    
+    //entity.Name = dto.Name; // todo: this belongs in the mapper
+    //entity.IsFavorite = dto.IsFavorite;
     
     await context.SaveChangesAsync();
 
     return TypedResults.NoContent();
 });
-
 
 // Get Authors
 app.MapGet("/author", Results<NotFound<string>, Ok<IEnumerable<AuthorDTO>>> (Context context) =>
@@ -236,6 +254,21 @@ app.MapGet("/author", Results<NotFound<string>, Ok<IEnumerable<AuthorDTO>>> (Con
     return authors is null || !authors.Any()
         ? TypedResults.NotFound("No authors found.")
         : TypedResults.Ok(authors.AsEnumerable());
+});
+
+// Get Author with books by Id
+app.MapGet("/authorwithbooks/{id:int}", async Task<Results<BadRequest<string>, Ok<AuthorWithBooksDTO>, NotFound<string>>> (Context context, int id) =>
+{
+    if (id < 1)
+    {
+        return TypedResults.BadRequest("Invalid author id.");
+    }
+    if (await context.Authors.Include(a => a.Books).SingleOrDefaultAsync(a => a.Id == id) is Author author)
+    {
+        AuthorWithBooksDTO dto = EntityToDTO.MapAuthorWithBooksEntityToDTO(author);
+        return TypedResults.Ok(dto);
+    }
+    return TypedResults.NotFound($"No author with id {id} found.");
 });
 
 // Get Author By Id

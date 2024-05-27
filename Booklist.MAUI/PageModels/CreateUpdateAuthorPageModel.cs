@@ -17,7 +17,7 @@ public partial class CreateUpdateAuthorPageModel(IDataService dataService) : Obs
     [RelayCommand]
     private async Task SaveClicked()
     {
-        string originalAuthorName = Author.Name;
+        string originalAuthorName = (await _dataService.GetAuthorAsync(Author.Id)).Name;
 
         ValidationResult validation = Author.Validate();
 

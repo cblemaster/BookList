@@ -44,7 +44,7 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
 
         if (!deleteConfirmed) { return; }
 
-        if (await _dataService.DoesAuthorHaveBooks(SelectedAuthor.Id))
+        if ((await _dataService.GetAuthorWithBooksAsync(SelectedAuthor.Id)).Books.Any())
         {
             await Shell.Current.DisplayAlert("Error!", "Cannot delete author since it is associated with one or more books.", "OK");
             return;
@@ -56,8 +56,7 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
     }
 
     [RelayCommand]
-    private async Task UpdateSelectedAuthorAsync()
-    {
+    private async Task UpdateSelectedAuthorAsync() =>
         await Shell.Current.Navigation
             .PushModalAsync(new CreateUpdateAuthorPage
                 (new()
@@ -66,7 +65,6 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
                     Name = SelectedAuthor.Name,
                     IsFavorite = SelectedAuthor.IsFavorite
                 }));
-    }
 
     private async Task LoadDataAsync() =>
         Authors = new ObservableCollection<AuthorDTO>

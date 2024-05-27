@@ -17,7 +17,7 @@ public partial class CreateUpdateGenrePageModel(IDataService dataService) : Obse
     [RelayCommand]
     private async Task SaveClicked()
     {
-        string originalGenreName = Genre.Name;
+        string originalGenreName = (await _dataService.GetGenreAsync(Genre.Id)).Name;
         
         ValidationResult validation = Genre.Validate();
 

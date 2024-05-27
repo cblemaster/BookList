@@ -5,8 +5,15 @@ namespace BookList.Core.Mappers;
 
 public static class DTOToEntity
 {
-    public static Author MapCreateUpdateAuthorDTOToAuthorEntity(CreateUpdateAuthorDTO dto)
+    public static Author MapCreateUpdateAuthorDTOToAuthorEntity(CreateUpdateAuthorDTO dto, Author entity = null!)
     {
+        if (entity is not null)
+        {
+            entity.Name = dto.Name;
+            entity.IsFavorite = dto.IsFavorite;
+            return entity;
+        }
+        
         return new()
         {
             Id = dto.Id,
@@ -15,8 +22,15 @@ public static class DTOToEntity
         };
     }
 
-    public static Genre MapCreateUpdateGenreDTOToAuthorEntity(CreateUpdateGenreDTO dto)
+    public static Genre MapCreateUpdateGenreDTOToAuthorEntity(CreateUpdateGenreDTO dto, Genre entity = null!)
     {
+        if (entity is not null)
+        {
+            entity.Name = dto.Name;
+            entity.IsFavorite = dto.IsFavorite;
+            return entity;
+        }
+
         return new()
         {
             Id = dto.Id,
