@@ -150,6 +150,46 @@ app.MapDelete("/author/{id:int}", async Task<Results<BadRequest<string>, NoConte
 });
 
 // Update Author
+app.MapPut("/author/{id:int}", async Task<Results<BadRequest<string>, NoContent>> (Context context, int id, CreateUpdateAuthorDTO dto) =>
+{
+    if (dto is null)
+    {
+        return TypedResults.BadRequest("No author to update provided.");
+    }
+
+    if (id < 1 || id != dto.Id)
+    {
+        return TypedResults.BadRequest("Invalid author id.");
+    }
+
+    if (context.Authors.Select(a => a.Name).Contains(dto.Name))
+    {
+        return TypedResults.BadRequest($"Author name {dto.Name} is already used.");
+    }
+    
+    ValidationResult validationResult = dto.Validate();
+
+    if (!validationResult.IsValid)
+    {
+        return TypedResults.BadRequest(validationResult.ErrorMessage);
+    }
+
+    Author entity = (await context.Authors.SingleOrDefaultAsync(a => a.Id == id));
+
+    if (entity is null)
+    {
+        return TypedResults.BadRequest("Unable to find author to update.");
+    }
+
+    entity.Name = dto.Name;
+    entity.IsFavorite = dto.IsFavorite;
+    
+    await context.SaveChangesAsync();
+
+    return TypedResults.NoContent();
+});
+
+
 // Get Authors
 app.MapGet("/author", Results<NotFound<string>, Ok<IEnumerable<AuthorDTO>>> (Context context) =>
 {

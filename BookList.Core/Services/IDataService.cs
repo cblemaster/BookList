@@ -8,6 +8,7 @@ public interface IDataService
     Task DeleteAuthorAsync(int id);
     Task<AuthorDTO> GetAuthorAsync(int id);
     Task<IEnumerable<AuthorDTO>> GetAuthorsAsync();
+    Task UpdateAuthorAsync(int id, CreateUpdateAuthorDTO dto);
     Task DeleteBookAsync(int id);
     Task<BookDTO> GetBookAsync(int id);
     Task<IEnumerable<BookDTO>> GetBooksAsync();

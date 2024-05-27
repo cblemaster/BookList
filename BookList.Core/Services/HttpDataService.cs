@@ -78,6 +78,21 @@ public class HttpDataService : IDataService
         catch (Exception) { throw; }
     }
 
+    public async Task UpdateAuthorAsync(int id, CreateUpdateAuthorDTO dto)
+    {
+        if (dto is null || id < 1 || id != dto.Id) { return; }
+
+        StringContent content = new(JsonSerializer.Serialize(dto));
+        content.Headers.ContentType = new("application/json");
+
+        try
+        {
+            HttpResponseMessage response = await _client.PutAsync($"/author/{id}", content);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception) { throw; }
+    }
+
     public async Task DeleteBookAsync(int id)
     {
         if (id < 1) { return; }

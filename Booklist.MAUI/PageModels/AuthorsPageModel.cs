@@ -55,6 +55,19 @@ public partial class AuthorsPageModel(IDataService dataService) : ObservableObje
         SelectedAuthor = null!;
     }
 
+    [RelayCommand]
+    private async Task UpdateSelectedAuthorAsync()
+    {
+        await Shell.Current.Navigation
+            .PushModalAsync(new CreateUpdateAuthorPage
+                (new()
+                {
+                    Id = SelectedAuthor.Id,
+                    Name = SelectedAuthor.Name,
+                    IsFavorite = SelectedAuthor.IsFavorite
+                }));
+    }
+
     private async Task LoadDataAsync() =>
         Authors = new ObservableCollection<AuthorDTO>
             (await _dataService.GetAuthorsAsync());

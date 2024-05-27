@@ -39,7 +39,9 @@
         <HorizontalStackLayout Grid.Row="1" Spacing="5">
             <Button Command="{Binding CreateAuthorCommand, Mode=OneWay}"
                     Text="Create New Author" />
-            <Button IsEnabled="{Binding IsAuthorSelected, Mode=OneWay}" Text="Update Selected Author" />
+            <Button Command="{Binding UpdateSelectedAuthorCommand, Mode=OneWay}"
+                    IsEnabled="{Binding IsAuthorSelected, Mode=OneWay}"
+                    Text="Update Selected Author" />
             <Button Command="{Binding DeleteSelectedAuthorCommand, Mode=OneWay}"
                     IsEnabled="{Binding IsAuthorSelected, Mode=OneWay}"
                     Text="Delete Selected Author" />
