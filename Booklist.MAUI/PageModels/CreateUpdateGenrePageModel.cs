@@ -1,4 +1,5 @@
 ﻿using BookList.Core.DTO;
+using BookList.Core.Entities;
 using BookList.Core.Services;
 using BookList.Core.Validation;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -30,7 +31,15 @@ public partial class CreateUpdateGenrePageModel(IDataService dataService) : Obse
             return;
         }
 
-        await _dataService.CreateGenreAsync(Genre);
+        if (Genre.Id == 0)  //create
+        {
+            await _dataService.CreateGenreAsync(Genre);
+        }
+        else  //update
+        {
+            await _dataService.UpdateGenreAsync(Genre.Id, Genre);
+        }
+        
         await Shell.Current.Navigation.PopModalAsync();
     }
 

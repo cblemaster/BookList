@@ -74,6 +74,45 @@ app.MapDelete("/genre/{id:int}", async Task<Results<BadRequest<string>, NoConten
 });
 
 // Update Genre
+app.MapPut("/genre/{id:int}", async Task<Results<BadRequest<string>, NoContent>> (Context context, int id, CreateUpdateGenreDTO dto) =>
+{
+    if (dto is null)
+    {
+        return TypedResults.BadRequest("No genre to update provided.");
+    }
+
+    if (id < 1 || id != dto.Id)
+    {
+        return TypedResults.BadRequest("Invalid genre id.");
+    }
+
+    if (context.Genres.Select(a => a.Name).Contains(dto.Name))
+    {
+        return TypedResults.BadRequest($"Genre name {dto.Name} is already used.");
+    }
+
+    ValidationResult validationResult = dto.Validate();
+
+    if (!validationResult.IsValid)
+    {
+        return TypedResults.BadRequest(validationResult.ErrorMessage);
+    }
+
+    Genre entity = (await context.Genres.SingleOrDefaultAsync(a => a.Id == id));
+
+    if (entity is null)
+    {
+        return TypedResults.BadRequest("Unable to find genre to update.");
+    }
+
+    entity.Name = dto.Name;
+    entity.IsFavorite = dto.IsFavorite;
+
+    await context.SaveChangesAsync();
+
+    return TypedResults.NoContent();
+});
+
 // Get Genres
 app.MapGet("/genre", Results<NotFound<string>, Ok<IEnumerable<GenreDTO>>> (Context context) =>
 {

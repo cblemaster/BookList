@@ -54,6 +54,17 @@ public partial class GenresPageModel(IDataService dataService) : ObservableObjec
         SelectedGenre = null!;
     }
 
+    [RelayCommand]
+    private async Task UpdateGenreAsync() =>
+        await Shell.Current.Navigation
+            .PushModalAsync(new CreateUpdateGenrePage
+                (new()
+                {
+                    Id = SelectedGenre.Id,
+                    Name = SelectedGenre.Name,
+                    IsFavorite = SelectedGenre.IsFavorite
+                }));
+
     private async Task LoadDataAsync() =>
         Genres = new ObservableCollection<GenreDTO>
             (await _dataService.GetGenresAsync());

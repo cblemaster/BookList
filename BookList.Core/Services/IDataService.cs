@@ -16,6 +16,7 @@ public interface IDataService
     Task DeleteGenreAsync(int id);
     Task<GenreDTO> GetGenreAsync(int id);
     Task<IEnumerable<GenreDTO>> GetGenresAsync();
+    Task UpdateGenreAsync(int id, CreateUpdateGenreDTO dto);
     Task<bool> DoesAuthorHaveBooks(int id);
     Task<bool> DoesGenreHaveBooks(int id);
     Task<bool> IsAuthorNameAlreadyUsed(string name);

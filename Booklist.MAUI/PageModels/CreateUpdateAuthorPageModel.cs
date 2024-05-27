@@ -38,7 +38,6 @@ public partial class CreateUpdateAuthorPageModel(IDataService dataService) : Obs
         {
             await _dataService.UpdateAuthorAsync(Author.Id, Author);
         }
-
         
         await Shell.Current.Navigation.PopModalAsync();
     }

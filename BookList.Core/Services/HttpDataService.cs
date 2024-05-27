@@ -204,6 +204,21 @@ public class HttpDataService : IDataService
         catch (Exception) { throw; }
     }
 
+    public async Task UpdateGenreAsync(int id, CreateUpdateGenreDTO dto)
+    {
+        if (dto is null || id < 1 || id != dto.Id) { return; }
+
+        StringContent content = new(JsonSerializer.Serialize(dto));
+        content.Headers.ContentType = new("application/json");
+
+        try
+        {
+            HttpResponseMessage response = await _client.PutAsync($"/genre/{id}", content);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception) { throw; }
+    }
+
     public async Task<bool> DoesAuthorHaveBooks(int id)
     {
         List<int> authorIds = [];
