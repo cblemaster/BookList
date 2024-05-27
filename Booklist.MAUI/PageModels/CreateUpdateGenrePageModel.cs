@@ -17,6 +17,8 @@ public partial class CreateUpdateGenrePageModel(IDataService dataService) : Obse
     [RelayCommand]
     private async Task SaveClicked()
     {
+        string originalGenreName = Genre.Name;
+        
         ValidationResult validation = Genre.Validate();
 
         if (!validation.IsValid)
@@ -25,18 +27,22 @@ public partial class CreateUpdateGenrePageModel(IDataService dataService) : Obse
             return;
         }
 
-        if (await _dataService.IsGenreNameAlreadyUsed(Genre.Name))
-        {
-            await Shell.Current.DisplayAlert("Error!", $"Genre name {Genre.Name} is already used.", "OK");
-            return;
-        }
-
         if (Genre.Id == 0)  //create
         {
+            if (await _dataService.IsGenreNameAlreadyUsed(Genre.Name))
+            {
+                await Shell.Current.DisplayAlert("Error!", $"Genre name {Genre.Name} is already used.", "OK");
+                return;
+            }
             await _dataService.CreateGenreAsync(Genre);
         }
         else  //update
         {
+            if (Genre.Name != originalGenreName && await _dataService.IsGenreNameAlreadyUsed(Genre.Name))
+            {
+                await Shell.Current.DisplayAlert("Error!", $"Genre name {Genre.Name} is already used.", "OK");
+                return;
+            }
             await _dataService.UpdateGenreAsync(Genre.Id, Genre);
         }
         

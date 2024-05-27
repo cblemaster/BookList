@@ -1,4 +1,5 @@
 ﻿using BookList.Core.DTO;
+using BookList.Core.Entities;
 using BookList.Core.Services;
 using BookList.Core.Validation;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -16,6 +17,8 @@ public partial class CreateUpdateAuthorPageModel(IDataService dataService) : Obs
     [RelayCommand]
     private async Task SaveClicked()
     {
+        string originalAuthorName = Author.Name;
+
         ValidationResult validation = Author.Validate();
 
         if (!validation.IsValid)
@@ -24,18 +27,22 @@ public partial class CreateUpdateAuthorPageModel(IDataService dataService) : Obs
             return;
         }
 
-        if (await _dataService.IsAuthorNameAlreadyUsed(Author.Name))
-        {
-            await Shell.Current.DisplayAlert("Error!", $"Author name { Author.Name } is already used.", "OK");
-            return;
-        }
-
         if (Author.Id == 0)  //create
         {
+            if (await _dataService.IsAuthorNameAlreadyUsed(Author.Name))
+            {
+                await Shell.Current.DisplayAlert("Error!", $"Author name {Author.Name} is already used.", "OK");
+                return;
+            }
             await _dataService.CreateAuthorAsync(Author);
         }
         else  //update
         {
+            if (Author.Name != originalAuthorName && await _dataService.IsAuthorNameAlreadyUsed(Author.Name))
+            {
+                await Shell.Current.DisplayAlert("Error!", $"Author name {Author.Name} is already used.", "OK");
+                return;
+            }
             await _dataService.UpdateAuthorAsync(Author.Id, Author);
         }
         

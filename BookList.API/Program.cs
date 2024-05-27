@@ -86,11 +86,6 @@ app.MapPut("/genre/{id:int}", async Task<Results<BadRequest<string>, NoContent>>
         return TypedResults.BadRequest("Invalid genre id.");
     }
 
-    if (context.Genres.Select(a => a.Name).Contains(dto.Name))
-    {
-        return TypedResults.BadRequest($"Genre name {dto.Name} is already used.");
-    }
-
     ValidationResult validationResult = dto.Validate();
 
     if (!validationResult.IsValid)
@@ -105,7 +100,12 @@ app.MapPut("/genre/{id:int}", async Task<Results<BadRequest<string>, NoContent>>
         return TypedResults.BadRequest("Unable to find genre to update.");
     }
 
-    entity.Name = dto.Name;
+    if (dto.Name != entity.Name && context.Genres.Select(a => a.Name).Contains(dto.Name))
+    {
+        return TypedResults.BadRequest($"Genre name {dto.Name} is already used.");
+    }
+
+    entity.Name = dto.Name; // todo: this belongs in the mapper
     entity.IsFavorite = dto.IsFavorite;
 
     await context.SaveChangesAsync();
@@ -200,12 +200,7 @@ app.MapPut("/author/{id:int}", async Task<Results<BadRequest<string>, NoContent>
     {
         return TypedResults.BadRequest("Invalid author id.");
     }
-
-    if (context.Authors.Select(a => a.Name).Contains(dto.Name))
-    {
-        return TypedResults.BadRequest($"Author name {dto.Name} is already used.");
-    }
-    
+  
     ValidationResult validationResult = dto.Validate();
 
     if (!validationResult.IsValid)
@@ -220,7 +215,12 @@ app.MapPut("/author/{id:int}", async Task<Results<BadRequest<string>, NoContent>
         return TypedResults.BadRequest("Unable to find author to update.");
     }
 
-    entity.Name = dto.Name;
+    if (dto.Name != entity.Name && context.Authors.Select(a => a.Name).Contains(dto.Name))
+    {
+        return TypedResults.BadRequest($"Author name {dto.Name} is already used.");
+    }
+
+    entity.Name = dto.Name; // todo: this belongs in the mapper
     entity.IsFavorite = dto.IsFavorite;
     
     await context.SaveChangesAsync();
