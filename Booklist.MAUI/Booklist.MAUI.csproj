@@ -78,6 +78,9 @@
 	  <MauiXaml Update="Pages\CreateUpdateAuthorPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Pages\CreateUpdateBookPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\CreateUpdateGenrePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

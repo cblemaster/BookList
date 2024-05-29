@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:pagemodels="clr-namespace:Booklist.MAUI.PageModels"
+             xmlns:dto="clr-namespace:BookList.Core.DTO;assembly=BookList.Core"
+             x:DataType="{x:Type pagemodels:CreateUpdateBookPageModel}"
+             x:Class="Booklist.MAUI.Pages.CreateUpdateBookPage"
+             Title="Create Update Book Page">
+    <ScrollView>
+        <VerticalStackLayout Margin="10" Spacing="10">
+            <Label Text="Book Title" Style="{StaticResource BigLabelStyle}" />
+            <Entry Text="{Binding Book.Title, Mode=TwoWay}" />
+            <Label Text="Subtitle" Style="{StaticResource SmallLabelStyle}" />
+            <Entry Text="{Binding Book.Subtitle, Mode=TwoWay}" />
+            <HorizontalStackLayout Spacing="5">
+                <Label Text="Is Favorite?"
+                       Style="{StaticResource SmallLabelStyle}"
+                       VerticalOptions="Center" />
+                <Switch IsToggled="{Binding Book.IsFavorite, Mode=TwoWay}" />
+            </HorizontalStackLayout>
+            <Label Text="Genre" Style="{StaticResource SmallLabelStyle}" />
+            <Picker ItemsSource="{Binding Genres, Mode=OneWay}"
+                    ItemDisplayBinding="{Binding Name}"
+                    SelectedItem="{Binding SelectedGenre, Mode=TwoWay}">
+                <Picker.Behaviors>
+                    <toolkit:EventToCommandBehavior
+                        EventName="Loaded" 
+                        Command="{Binding GenresLoadedCommand, Mode=OneWay}" />
+                </Picker.Behaviors>
+            </Picker>
+            <Label Text="Publisher" Style="{StaticResource SmallLabelStyle}" />
+            <Entry Text="{Binding Book.Publisher, Mode=TwoWay}" />
+            <Label Text="Page Count" Style="{StaticResource SmallLabelStyle}" />
+            <Entry Text="{Binding Book.PageCount, Mode=TwoWay}" />
+            <Label Text="Description" Style="{StaticResource SmallLabelStyle}" />
+            <Editor Text="{Binding Book.Description, Mode=TwoWay}" />
+            <Label Text="Authors" Style="{StaticResource SmallLabelStyle}" />
+            <CollectionView SelectedItems="{Binding SelectedAuthors, Mode=TwoWay}"
+                            ItemsSource="{Binding Authors, Mode=OneWay}"
+                            SelectionMode="Multiple">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical"></LinearItemsLayout>
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type dto:AuthorDTO}">
+                        <Label Text="{Binding Name, Mode=OneWay}" />
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.Behaviors>
+                    <toolkit:EventToCommandBehavior 
+                        EventName="Loaded" 
+                        Command="{Binding AuthorsLoadedCommand, Mode=OneWay}" />
+                </CollectionView.Behaviors>
+            </CollectionView>
+            <HorizontalStackLayout Spacing="5">
+                <Button Command="{Binding SaveClickedCommand}" Text="Save" />
+                <Button Command="{Binding CancelClickedCommand}" Text="Cancel" />
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
