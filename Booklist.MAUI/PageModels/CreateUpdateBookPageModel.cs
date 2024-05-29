@@ -1,5 +1,7 @@
 ﻿using BookList.Core.DTO;
+using BookList.Core.Entities;
 using BookList.Core.Services;
+using BookList.Core.Validation;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -47,7 +49,6 @@ public partial class CreateUpdateBookPageModel : ObservableObject
     {
         if (Authors is not null && Book is not null)
         {
-            //SelectedAuthors = Book.Authors.ToObservableCollection();
             SelectedAuthors = new(Book.Authors);
         }
     }
@@ -55,7 +56,33 @@ public partial class CreateUpdateBookPageModel : ObservableObject
     [RelayCommand]
     private async Task SaveClicked()
     {
-        
+        ValidationResult validation = Book.Validate();
+
+        if (!validation.IsValid)
+        {
+            await Shell.Current.DisplayAlert("Invalid Data!", validation.ErrorMessage, "OK");
+            return;
+        }
+
+        if (SelectedGenre is null)
+        {
+            await Shell.Current.DisplayAlert("Invalid Data!", "Genre is required.", "OK");
+            return;
+        }
+
+        Book.Genre = SelectedGenre;
+        Book.Authors = SelectedAuthors.Cast<AuthorDTO>().ToList();
+
+        if (Book.Id == 0)  //create
+        {
+            await _dataService.CreateBookAsync(Book);
+        }
+        else  //update
+        {
+            await _dataService.UpdateBookAsync(Book.Id, Book);
+        }
+
+        await Shell.Current.Navigation.PopModalAsync();
     }
 
     [RelayCommand]

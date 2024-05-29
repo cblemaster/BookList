@@ -109,6 +109,20 @@ public class HttpDataService : IDataService
         catch (Exception) { throw; }
     }
 
+    public async Task<BookDTO> CreateBookAsync(CreateUpdateBookDTO bookToCreate)
+    {
+        StringContent content = new(JsonSerializer.Serialize(bookToCreate));
+        content.Headers.ContentType = new("application/json");
+
+        try
+        {
+            HttpResponseMessage response = await _client.PostAsync("/book", content);
+            response.EnsureSuccessStatusCode();
+            return await GetBookAsync(await response.Content.ReadFromJsonAsync<BookDTO>() is BookDTO newBook ? newBook.Id : 0);
+        }
+        catch (Exception) { throw; }
+    }
+
     public async Task DeleteBookAsync(int id)
     {
         if (id < 1) { return; }
@@ -153,6 +167,21 @@ public class HttpDataService : IDataService
                        null, new(0, "NotFound", false), [new(0, "NotFound", false)])
                 : new(0, "NotFound", string.Empty, false, null, null, null,
                     new(0, "NotFound", false), [new(0, "NotFound", false)]);
+        }
+        catch (Exception) { throw; }
+    }
+
+    public async Task UpdateBookAsync(int id, CreateUpdateBookDTO dto)
+    {
+        if (dto is null || id < 1 || id != dto.Id) { return; }
+
+        StringContent content = new(JsonSerializer.Serialize(dto));
+        content.Headers.ContentType = new("application/json");
+
+        try
+        {
+            HttpResponseMessage response = await _client.PutAsync($"/book/{id}", content);
+            response.EnsureSuccessStatusCode();
         }
         catch (Exception) { throw; }
     }

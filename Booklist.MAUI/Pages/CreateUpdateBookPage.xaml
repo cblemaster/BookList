@@ -10,9 +10,27 @@
     <ScrollView>
         <VerticalStackLayout Margin="10" Spacing="10">
             <Label Text="Book Title" Style="{StaticResource BigLabelStyle}" />
-            <Entry Text="{Binding Book.Title, Mode=TwoWay}" />
+            <Entry Text="{Binding Book.Title, Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <toolkit:TextValidationBehavior 
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        ValidStyle="{StaticResource ValidEntryStyle}"
+                        Flags="ValidateOnValueChanged"
+                        MinimumLength="1"
+                        MaximumLength="100" />
+                </Entry.Behaviors>
+            </Entry>
             <Label Text="Subtitle" Style="{StaticResource SmallLabelStyle}" />
-            <Entry Text="{Binding Book.Subtitle, Mode=TwoWay}" />
+            <Entry Text="{Binding Book.Subtitle, Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <toolkit:TextValidationBehavior 
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        ValidStyle="{StaticResource ValidEntryStyle}"
+                        Flags="ValidateOnValueChanged"
+                        MinimumLength="0"
+                        MaximumLength="100" />
+                </Entry.Behaviors>
+            </Entry>
             <HorizontalStackLayout Spacing="5">
                 <Label Text="Is Favorite?"
                        Style="{StaticResource SmallLabelStyle}"
@@ -30,11 +48,36 @@
                 </Picker.Behaviors>
             </Picker>
             <Label Text="Publisher" Style="{StaticResource SmallLabelStyle}" />
-            <Entry Text="{Binding Book.Publisher, Mode=TwoWay}" />
+            <Entry Text="{Binding Book.Publisher, Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <toolkit:TextValidationBehavior 
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        ValidStyle="{StaticResource ValidEntryStyle}"
+                        Flags="ValidateOnValueChanged"
+                        MinimumLength="0"
+                        MaximumLength="100" />
+                </Entry.Behaviors>
+            </Entry>
             <Label Text="Page Count" Style="{StaticResource SmallLabelStyle}" />
-            <Entry Text="{Binding Book.PageCount, Mode=TwoWay}" />
+            <Entry Text="{Binding Book.PageCount, Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <toolkit:NumericValidationBehavior
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        ValidStyle="{StaticResource ValidEntryStyle}"
+                        Flags="ValidateOnValueChanged" />
+                </Entry.Behaviors>
+            </Entry>
             <Label Text="Description" Style="{StaticResource SmallLabelStyle}" />
-            <Editor Text="{Binding Book.Description, Mode=TwoWay}" />
+            <Editor Text="{Binding Book.Description, Mode=TwoWay}">
+                <Editor.Behaviors>
+                    <toolkit:TextValidationBehavior 
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        ValidStyle="{StaticResource ValidEntryStyle}"
+                        Flags="ValidateOnValueChanged"
+                        MinimumLength="0"
+                        MaximumLength="255" />
+                </Editor.Behaviors>
+            </Editor>
             <Label Text="Authors" Style="{StaticResource SmallLabelStyle}" />
             <CollectionView SelectedItems="{Binding SelectedAuthors, Mode=TwoWay}"
                             ItemsSource="{Binding Authors, Mode=OneWay}"

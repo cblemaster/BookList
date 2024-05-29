@@ -42,7 +42,7 @@ app.MapPost("/genre", async Task<Results<BadRequest<string>, Created<GenreDTO>>>
         return TypedResults.BadRequest(validationResult.ErrorMessage);
     }
 
-    Genre newGenre = DTOToEntity.MapCreateUpdateGenreDTOToAuthorEntity(genreToCreate);
+    Genre newGenre = DTOToEntity.MapCreateUpdateGenreDTOToGenreEntity(genreToCreate);
     context.Genres.Add(newGenre);
     await context.SaveChangesAsync();
 
@@ -105,11 +105,8 @@ app.MapPut("/genre/{id:int}", async Task<Results<BadRequest<string>, NoContent>>
         return TypedResults.BadRequest($"Genre name {dto.Name} is already used.");
     }
 
-    entity = DTOToEntity.MapCreateUpdateGenreDTOToAuthorEntity(dto, entity);
+    entity = DTOToEntity.MapCreateUpdateGenreDTOToGenreEntity(dto, entity);
     
-    //entity.Name = dto.Name; // todo: this belongs in the mapper
-    //entity.IsFavorite = dto.IsFavorite;
-
     await context.SaveChangesAsync();
 
     return TypedResults.NoContent();
@@ -239,9 +236,6 @@ app.MapPut("/author/{id:int}", async Task<Results<BadRequest<string>, NoContent>
 
     entity = DTOToEntity.MapCreateUpdateAuthorDTOToAuthorEntity(dto, entity);
     
-    //entity.Name = dto.Name; // todo: this belongs in the mapper
-    //entity.IsFavorite = dto.IsFavorite;
-    
     await context.SaveChangesAsync();
 
     return TypedResults.NoContent();
@@ -287,6 +281,34 @@ app.MapGet("/author/{id:int}", async Task<Results<BadRequest<string>, Ok<AuthorD
 });
 
 // Create Book
+app.MapPost("/book", async Task<Results<BadRequest<string>, Created<BookDTO>>> (Context context, CreateUpdateBookDTO bookToCreate) =>
+{
+    if (bookToCreate is null)
+    {
+        return TypedResults.BadRequest("No book to create provided.");
+    }
+
+    ValidationResult validationResult = bookToCreate.Validate();
+
+    if (!validationResult.IsValid)
+    {
+        return TypedResults.BadRequest(validationResult.ErrorMessage);
+    }
+
+    Book newBook = DTOToEntity.MapCreateUpdateBookDTOToBookEntity(bookToCreate);
+    newBook.Genre = await context.Genres.SingleOrDefaultAsync(g => g.Id == bookToCreate.Genre.Id);
+    newBook.Authors.Clear();
+    await context.SaveChangesAsync();
+    foreach (AuthorDTO author in bookToCreate.Authors)
+    {
+        newBook.Authors.Add(await context.Authors.SingleOrDefaultAsync(a => a.Id == author.Id));
+    }
+
+    context.Books.Add(newBook);
+    await context.SaveChangesAsync();
+
+    return TypedResults.Created($"/book/{newBook.Id}", EntityToDTO.MapBookEntityToDTO(newBook));
+});
 
 // Delete Book
 app.MapDelete("/book/{id:int}", async Task<Results<BadRequest<string>, NoContent, NotFound<string>>> (Context context, int id) =>
@@ -310,6 +332,45 @@ app.MapDelete("/book/{id:int}", async Task<Results<BadRequest<string>, NoContent
 });
 
 // Update Book
+app.MapPut("/book/{id:int}", async Task<Results<BadRequest<string>, NoContent>> (Context context, int id, CreateUpdateBookDTO dto) =>
+{
+    if (dto is null)
+    {
+        return TypedResults.BadRequest("No book to update provided.");
+    }
+
+    if (id < 1 || id != dto.Id)
+    {
+        return TypedResults.BadRequest("Invalid book id.");
+    }
+
+    ValidationResult validationResult = dto.Validate();
+
+    if (!validationResult.IsValid)
+    {
+        return TypedResults.BadRequest(validationResult.ErrorMessage);
+    }
+
+    Book entity = (await context.Books.Include(b => b.Authors).Include(b => b.Genre).SingleOrDefaultAsync(b => b.Id == id));
+
+    if (entity is null)
+    {
+        return TypedResults.BadRequest("Unable to find book to update.");
+    }
+
+    entity = DTOToEntity.MapCreateUpdateBookDTOToBookEntity(dto, entity);
+    entity.Genre = await context.Genres.SingleOrDefaultAsync(g => g.Id == dto.Genre.Id);
+    entity.Authors.Clear();
+    //await context.SaveChangesAsync();
+    foreach (AuthorDTO author in dto.Authors)
+    {
+        entity.Authors.Add(await context.Authors.SingleOrDefaultAsync(a => a.Id == author.Id));
+    }
+
+    await context.SaveChangesAsync();
+
+    return TypedResults.NoContent();
+});
 
 // Get Books
 app.MapGet("/book", Results<NotFound<string>, Ok<IEnumerable<BookDTO>>> (Context context) =>
